@@ -4,4 +4,8 @@
 /.settings
 /build
 /bin
+/out
 *.swp
+/*.iml
+/*.iws
+/*.ipr
