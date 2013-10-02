@@ -37,7 +37,12 @@ public class AxesRunner extends Parameterized {
             @Override
             public Set<Object> apply(Method m) {
                 try {
-                    return newHashSet((Iterable<?>) m.invoke(null));
+                    final Object invoke = m.invoke(null);
+                    if (invoke instanceof Iterable<?>) {
+                        return newHashSet((Iterable<?>) invoke);
+                    } else {
+                        throw new IllegalArgumentException(m + " does not return an Iterable<?>");
+                    }
                 } catch (IllegalAccessException | InvocationTargetException ex) {
                     throw new IllegalStateException(ex);
                 }
