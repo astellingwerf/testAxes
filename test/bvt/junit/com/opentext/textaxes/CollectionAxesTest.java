@@ -34,8 +34,8 @@ public class CollectionAxesTest
 	}
 
 	@Axis(1)
-	public static String[] b() {
-		return new String[] { "X", "Y" };
+	public static List<String> b() {
+		return asList( "X", "Y" );
 	}
 
 	@Axis(2)
@@ -45,7 +45,6 @@ public class CollectionAxesTest
 
 	// Filtering
 	private static int	excludingCounter	= 0;
-	private static int	onlyIfCounter			= 0;
 
 	@Excluding
 	public static boolean moreThan2Sixes(	@SuppressWarnings("unused") List<String> a,
@@ -55,18 +54,9 @@ public class CollectionAxesTest
 		return false;
 	}
 
-	@OnlyIf
-	public static boolean alwaysTrue(	@SuppressWarnings("unused") List<String> a,
-																		@SuppressWarnings("unused") String b,
-																		@SuppressWarnings("unused") List<String> c) {
-		onlyIfCounter++;
-		return true;
-	}
-
 	@AfterClass
 	public static void assertFilterInvocationCount() {
 		Assert.assertEquals(8, excludingCounter);
-		Assert.assertEquals(8, onlyIfCounter);
 	}
 
 	// Testing

@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import java.util.Arrays;
 
 @RunWith(AxesRunner.class)
 public class SimpleAxesTest
@@ -29,18 +30,18 @@ public class SimpleAxesTest
 	public int	factorC;
 
 	@Axis(0)
-	public static int[] a() {
-		return new int[] { 1, 2, 4, 8 };
+	public static Iterable<Integer> a() {
+		return Arrays.asList(1, 2, 4, 8 );
 	}
 
 	@Axis(1)
-	public static int[] b() {
-		return new int[] { 16, 32 };
+	public static Iterable<Integer> b() {
+		return Arrays.asList( 16, 32 );
 	}
 
 	@Axis(2)
-	public static int[] c() {
-		return new int[] { 64, 128, 256, 512, 1024 };
+	public static Iterable<Integer> c() {
+		return Arrays.asList( 64, 128, 256, 512, 1024 );
 	}
 
 	// Filtering
@@ -53,16 +54,10 @@ public class SimpleAxesTest
 		return Integer.toString(b).contains("6") && Integer.toString(c).contains("6");
 	}
 
-	@OnlyIf
-	public static boolean alwaysTrue(@SuppressWarnings("unused") int a, @SuppressWarnings("unused") int b, @SuppressWarnings("unused") int c) {
-		onlyIfCounter++;
-		return true;
-	}
 
 	@AfterClass
 	public static void assertFilterInvocationCount() {
 		Assert.assertEquals(40, excludingCounter);
-		Assert.assertEquals(32, onlyIfCounter);
 	}
 
 	// Testing
