@@ -63,13 +63,19 @@ public class CollectionAxesTest
 	private static int	testCaseCounter	= 0;
 
 	@Test
-	public void test() throws Exception {
+	public void test1() throws Exception {
+		testCaseCounter++;
+		// Do whatever the test should do
+	}
+
+    @Test
+	public void test2() throws Exception {
 		testCaseCounter++;
 		// Do whatever the test should do
 	}
 
 	@AfterClass
 	public static void assertTestCaseCount() {
-		Assert.assertEquals(8, testCaseCounter);
+		Assert.assertEquals(16, testCaseCounter);
 	}
 }
