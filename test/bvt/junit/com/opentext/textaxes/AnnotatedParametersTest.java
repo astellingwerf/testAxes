@@ -58,6 +58,7 @@ public class AnnotatedParametersTest
 
 	@Test
 	public void doNothing() {
+		// tests are in @Excluding methods
 	}
 
 }

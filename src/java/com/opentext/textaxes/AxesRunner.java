@@ -1,9 +1,7 @@
 package com.opentext.textaxes;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import org.junit.runners.Parameterized;
+import static com.google.common.collect.Lists.*;
+import static com.google.common.collect.Sets.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -14,77 +12,124 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.transform;
-import static com.google.common.collect.Sets.cartesianProduct;
-import static com.google.common.collect.Sets.newHashSet;
+import org.junit.runners.Parameterized;
 
-public class AxesRunner extends Parameterized {
-    public AxesRunner(Class<?> testClass) throws Throwable {
-        super(testClass);
-    }
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
-    public static Iterable<Object[]> generateCartesianProduct(Class<?> clazz) {
-        List<Method> axisMethods = newArrayList(getAnnotatedMethods(clazz, Axis.class));
-        Collections.sort(axisMethods, new Comparator<Method>() {
-            @Override
-            public int compare(Method o1, Method o2) {
-                return o1.getAnnotation(Axis.class).value() - o2.getAnnotation(Axis.class).value();
-            }
-        });
+public class AxesRunner extends Parameterized
+{
+	public AxesRunner(Class<?> testClass) throws Throwable {
+		super(testClass);
+	}
 
-        List<Set<Object>> axes = transform(axisMethods, new Function<Method, Set<Object>>() {
-            @Override
-            public Set<Object> apply(Method m) {
-                try {
-                    final Object invoke = m.invoke(null);
-                    if (invoke instanceof Iterable<?>) {
-                        return newHashSet((Iterable<?>) invoke);
-                    } else {
-                        throw new IllegalArgumentException(m + " does not return an Iterable<?>");
-                    }
-                } catch (IllegalAccessException | InvocationTargetException ex) {
-                    throw new IllegalStateException(ex);
-                }
-            }
-        });
+	public static Iterable<Object[]> generateCartesianProduct(Class<?> clazz) {
+		List<Method> axisMethods = newArrayList(getAnnotatedMethods(clazz, Axis.class));
+		Collections.sort(axisMethods, new Comparator<Method>()
+		{
+			@Override
+			public int compare(Method o1, Method o2) {
+				return o1.getAnnotation(Axis.class).value() - o2.getAnnotation(Axis.class).value();
+			}
+		});
 
-        Set<List<Object>> resultSet = cartesianProduct(axes);
+		List<Set<Object>> axes = transform(axisMethods, new Function<Method, Set<Object>>()
+		{
+			@Override
+			public Set<Object> apply(Method m) {
+				try {
+					final Object invoke = m.invoke(null);
+					if (invoke instanceof Iterable<?>) {
+						return newHashSet((Iterable<?>) invoke);
+					}
+					else {
+						throw new IllegalArgumentException(m + " does not return an Iterable<?>");
+					}
+				}
+				catch (IllegalAccessException | InvocationTargetException ex) {
+					throw new IllegalStateException(ex);
+				}
+			}
+		});
 
-        Iterable<Method> excludeFilterMethods = getAnnotatedMethods(clazz, Excluding.class);
+		Set<List<Object>> resultSet = cartesianProduct(axes);
 
-        List<Object[]> results = newArrayList();
-        for (List<Object> paramsForSingleTest : resultSet) {
-            final Object[] objects = paramsForSingleTest.toArray();
+		Iterable<Method> excludeFilterMethods = getAnnotatedMethods(clazz, Excluding.class);
 
-            if (Iterables.any(excludeFilterMethods, new Predicate<Method>() {
-                @Override
-                public boolean apply(Method m) {
-                    try {
-                        return (boolean) m.invoke(null, objects);
-                    } catch (IllegalAccessException | InvocationTargetException ex) {
-                        throw new IllegalStateException(ex);
-                    }
-                }
-            })) {
-                continue;
-            }
-            results.add(objects);
-        }
+		List<Object[]> results = newArrayList();
+		for (List<Object> paramsForSingleTest : resultSet) {
+			final Object[] objects = paramsForSingleTest.toArray();
 
-        return results;
-    }
+			if (Iterables.any(excludeFilterMethods, new Predicate<Method>()
+			{
+				@Override
+				public boolean apply(Method m) {
+					try {
+						final Predicate<Annotation[]> anyAnnotationOfType = anyAnnotationOfType(Axis.class);
+						final List<Annotation[]> parameterAnnotations = newArrayList(m.getParameterAnnotations());
+						if (Iterables.all(parameterAnnotations, anyAnnotationOfType)) {
+							Object[] inputs = new Object[parameterAnnotations.size()];
+							int i = 0;
+							for (Annotation[] annotations : parameterAnnotations) {
+								Axis annotation = (Axis) Iterables.find(newArrayList(annotations), annotationOfType(Axis.class));
+								inputs[i++] = objects[annotation.value()];
+							}
 
-    public static Iterable<Method> getAnnotatedMethods(Class<?> clazz, final Class<? extends Annotation> annotation) {
-        return Iterables.filter(newArrayList(clazz.getMethods()), new Predicate<Method>() {
-            @Override
-            public boolean apply(Method m) {
-                return staticMethodWithAnnotation(m, annotation);
-            }
-        });
-    }
+							return (boolean) m.invoke(null, inputs);
+						}
+						else if (!Iterables.any(parameterAnnotations, anyAnnotationOfType)) {
+							return (boolean) m.invoke(null, objects);
+						}
+						else {
+							throw new IllegalArgumentException("Either none or all parameters have to be annotated by @Axis");
+						}
+					}
+					catch (IllegalAccessException | InvocationTargetException ex) {
+						throw new IllegalStateException(ex);
+					}
+				}
 
-    private static boolean staticMethodWithAnnotation(Method method, Class<? extends Annotation> annotationClass) {
-        return ((method.getModifiers() & Modifier.STATIC) == Modifier.STATIC) && method.getAnnotation(annotationClass) != null;
-    }
+			})) {
+				continue;
+			}
+			results.add(objects);
+		}
+
+		return results;
+	}
+
+	public static Iterable<Method> getAnnotatedMethods(Class<?> clazz, final Class<? extends Annotation> annotation) {
+		return Iterables.filter(newArrayList(clazz.getMethods()), new Predicate<Method>()
+		{
+			@Override
+			public boolean apply(Method m) {
+				return staticMethodWithAnnotation(m, annotation);
+			}
+		});
+	}
+
+	private static boolean staticMethodWithAnnotation(Method method, Class<? extends Annotation> annotationClass) {
+		return ((method.getModifiers() & Modifier.STATIC) == Modifier.STATIC) && method.getAnnotation(annotationClass) != null;
+	}
+
+	private static Predicate<Annotation[]> anyAnnotationOfType(final Class<? extends Annotation> type) {
+		return new Predicate<Annotation[]>()
+		{
+			@Override
+			public boolean apply(Annotation[] input) {
+				return Iterables.any(newArrayList(input), annotationOfType(type));
+			}
+		};
+	}
+
+	private static Predicate<Annotation> annotationOfType(final Class<? extends Annotation> type) {
+		return new Predicate<Annotation>()
+		{
+			@Override
+			public boolean apply(Annotation input) {
+				return input.annotationType() == type;
+			}
+		};
+	}
 }
