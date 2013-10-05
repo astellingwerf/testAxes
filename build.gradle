@@ -1,8 +1,15 @@
 apply plugin: 'base'
 apply plugin: 'java'
+// IDEs
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+// Quality
 apply plugin: 'findbugs'
+apply plugin: 'jdepend'
+apply plugin: 'pmd'
+// Misc.
+apply plugin: 'build-dashboard'
+
 defaultTasks 'build'
 
 sourceCompatibility = 1.7

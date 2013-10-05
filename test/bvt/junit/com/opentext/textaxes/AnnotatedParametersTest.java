@@ -29,12 +29,12 @@ public class AnnotatedParametersTest
 
 	@Axis(1)
 	public static Iterable<String> b() {
-		return Arrays.asList("a", "bc");
+		return Arrays.asList("ab", "bc");
 	}
 
 	@Excluding
-	public static boolean businessRule(@Axis(1) String b) {
-		return b.contains("b");
+	public static boolean businessRule(@Axis(0) int a) {
+		return a <= 0;
 	}
 
 	@Excluding
