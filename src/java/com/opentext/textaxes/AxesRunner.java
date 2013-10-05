@@ -99,7 +99,7 @@ public class AxesRunner extends Parameterized
 		return results;
 	}
 
-	public static Iterable<Method> getAnnotatedMethods(Class<?> clazz, final Class<? extends Annotation> annotation) {
+	private static Iterable<Method> getAnnotatedMethods(Class<?> clazz, final Class<? extends Annotation> annotation) {
 		return Iterables.filter(newArrayList(clazz.getMethods()), new Predicate<Method>()
 		{
 			@Override
