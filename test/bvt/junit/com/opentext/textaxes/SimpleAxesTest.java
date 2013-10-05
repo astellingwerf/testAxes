@@ -64,6 +64,7 @@ public class SimpleAxesTest
 	private static int	testCaseCounter	= 0;
 
 	@Test
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
 	public void test() throws Exception {
 		testCaseCounter++;
 		// Do whatever the test should do

@@ -63,12 +63,14 @@ public class CollectionAxesTest
 	private static int	testCaseCounter	= 0;
 
 	@Test
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
 	public void test1() throws Exception {
 		testCaseCounter++;
 		// Do whatever the test should do
 	}
 
     @Test
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
 	public void test2() throws Exception {
 		testCaseCounter++;
 		// Do whatever the test should do

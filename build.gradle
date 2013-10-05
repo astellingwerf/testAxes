@@ -2,6 +2,7 @@ apply plugin: 'base'
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+apply plugin: 'findbugs'
 defaultTasks 'build'
 
 sourceCompatibility = 1.7
@@ -19,6 +20,10 @@ sourceSets {
     }
 }
 
+findbugs {
+    toolVersion = '2.0.1'
+    ignoreFailures = true
+}
 wrapper { gradleVersion = 1.8 }
 
 String buildRepos = 'http://buildrepos.vanenburg.com/'
@@ -34,5 +39,6 @@ repositories {
 dependencies {
     compile group: 'junit', name: 'junit', version: '4.11'
     compile group: 'com.google.guava', name: 'guava', version: '15.0'
+    testCompile group: 'com.google.code.findbugs', name: 'annotations', version: findbugs.toolVersion
     testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 }
