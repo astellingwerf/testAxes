@@ -5,6 +5,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 // Quality
 apply plugin: 'findbugs'
+apply plugin: 'jacoco'
 apply plugin: 'jdepend'
 apply plugin: 'pmd'
 // Misc.
@@ -30,6 +31,13 @@ sourceSets {
 findbugs {
     toolVersion = '2.0.1'
     ignoreFailures = true
+}
+buildDashboard.dependsOn jacocoTestReport
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
 }
 wrapper { gradleVersion = 1.8 }
 
