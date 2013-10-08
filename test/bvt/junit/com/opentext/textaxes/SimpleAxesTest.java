@@ -2,13 +2,14 @@ package com.opentext.textaxes;
 
 import static com.opentext.textaxes.AxesRunner.generateCartesianProduct;
 
+import java.util.Arrays;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import java.util.Arrays;
 
 @RunWith(AxesRunner.class)
 public class SimpleAxesTest
@@ -21,7 +22,7 @@ public class SimpleAxesTest
 	}
 
 	@Parameter(0)
-	public int	factorA; 
+	public int	factorA;
 
 	@Parameter(1)
 	public int	factorB;
@@ -31,29 +32,27 @@ public class SimpleAxesTest
 
 	@Axis(0)
 	public static Iterable<Integer> a() {
-		return Arrays.asList(1, 2, 4, 8 );
+		return Arrays.asList(1, 2, 4, 8);
 	}
 
 	@Axis(1)
 	public static Iterable<Integer> b() {
-		return Arrays.asList( 16, 32 );
+		return Arrays.asList(16, 32);
 	}
 
 	@Axis(2)
 	public static Iterable<Integer> c() {
-		return Arrays.asList( 64, 128, 256, 512, 1024 );
+		return Arrays.asList(64, 128, 256, 512, 1024);
 	}
 
 	// Filtering
 	private static int	excludingCounter	= 0;
-	private static int	onlyIfCounter			= 0;
 
 	@Excluding
 	public static boolean moreThan2Sixes(@SuppressWarnings("unused") int a, int b, int c) {
 		excludingCounter++;
 		return Integer.toString(b).contains("6") && Integer.toString(c).contains("6");
 	}
-
 
 	@AfterClass
 	public static void assertFilterInvocationCount() {
@@ -64,7 +63,7 @@ public class SimpleAxesTest
 	private static int	testCaseCounter	= 0;
 
 	@Test
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
+	@edu.umd.cs.findbugs.annotations.SuppressWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
 	public void test() throws Exception {
 		testCaseCounter++;
 		// Do whatever the test should do

@@ -35,7 +35,7 @@ public class CollectionAxesTest
 
 	@Axis(1)
 	public static List<String> b() {
-		return asList( "X", "Y" );
+		return asList("X", "Y");
 	}
 
 	@Axis(2)
@@ -63,14 +63,14 @@ public class CollectionAxesTest
 	private static int	testCaseCounter	= 0;
 
 	@Test
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
+	@edu.umd.cs.findbugs.annotations.SuppressWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
 	public void test1() throws Exception {
 		testCaseCounter++;
 		// Do whatever the test should do
 	}
 
-    @Test
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
+	@Test
+	@edu.umd.cs.findbugs.annotations.SuppressWarnings("ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
 	public void test2() throws Exception {
 		testCaseCounter++;
 		// Do whatever the test should do

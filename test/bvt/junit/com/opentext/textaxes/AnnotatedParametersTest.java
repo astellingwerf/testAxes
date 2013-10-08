@@ -44,7 +44,7 @@ public class AnnotatedParametersTest
 	}
 
 	@Excluding
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("ES_COMPARING_PARAMETER_STRING_WITH_EQ")
+	@edu.umd.cs.findbugs.annotations.SuppressWarnings("ES_COMPARING_PARAMETER_STRING_WITH_EQ")
 	public static boolean businessRuleB(@Axis(1) String b1, @Axis(1) String b2) {
 		Assert.assertEquals(b1, b2);
 		Assert.assertSame(b1, b2);
