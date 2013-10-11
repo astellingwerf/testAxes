@@ -17,6 +17,7 @@ import org.junit.runners.Parameterized;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.opentext.textaxes.utils.Arrays;
 
 public class AxesRunner extends Parameterized
 {
@@ -66,19 +67,19 @@ public class AxesRunner extends Parameterized
 				@Override
 				public boolean apply(Method m) {
 					try {
-						final Predicate<Annotation[]> anyAnnotationOfType = anyAnnotationOfType(Axis.class);
-						final List<Annotation[]> parameterAnnotations = newArrayList(m.getParameterAnnotations());
-						if (Iterables.all(parameterAnnotations, anyAnnotationOfType)) {
-							Object[] inputs = new Object[parameterAnnotations.size()];
+						final Predicate<Annotation[]> anyAnnotationOfType = hasAnyAnnotationOfType(Axis.class);
+						final Annotation[][] parameterAnnotations = m.getParameterAnnotations();
+						if (Arrays.all(parameterAnnotations, anyAnnotationOfType)) {
+							Object[] inputs = new Object[parameterAnnotations.length];
 							int i = 0;
 							for (Annotation[] annotations : parameterAnnotations) {
-								Axis annotation = (Axis) Iterables.find(newArrayList(annotations), annotationOfType(Axis.class));
+								Axis annotation = (Axis) Arrays.find(annotations, isAnnotationOfType(Axis.class));
 								inputs[i++] = objects[annotation.value()];
 							}
 
 							return (boolean) m.invoke(null, inputs);
 						}
-						else if (!Iterables.any(parameterAnnotations, anyAnnotationOfType)) {
+						else if (!Arrays.any(parameterAnnotations, anyAnnotationOfType)) {
 							return (boolean) m.invoke(null, objects);
 						}
 						else {
@@ -100,7 +101,7 @@ public class AxesRunner extends Parameterized
 	}
 
 	private static Iterable<Method> getAnnotatedMethods(Class<?> clazz, final Class<? extends Annotation> annotation) {
-		return Iterables.filter(newArrayList(clazz.getMethods()), new Predicate<Method>()
+		return Arrays.filter(clazz.getMethods(), new Predicate<Method>()
 		{
 			@Override
 			public boolean apply(Method m) {
@@ -113,17 +114,17 @@ public class AxesRunner extends Parameterized
 		return ((method.getModifiers() & Modifier.STATIC) == Modifier.STATIC) && method.getAnnotation(annotationClass) != null;
 	}
 
-	private static Predicate<Annotation[]> anyAnnotationOfType(final Class<? extends Annotation> type) {
+	private static Predicate<Annotation[]> hasAnyAnnotationOfType(final Class<? extends Annotation> type) {
 		return new Predicate<Annotation[]>()
 		{
 			@Override
 			public boolean apply(Annotation[] input) {
-				return Iterables.any(newArrayList(input), annotationOfType(type));
+				return Arrays.any(input, isAnnotationOfType(type));
 			}
 		};
 	}
 
-	private static Predicate<Annotation> annotationOfType(final Class<? extends Annotation> type) {
+	private static Predicate<Annotation> isAnnotationOfType(final Class<? extends Annotation> type) {
 		return new Predicate<Annotation>()
 		{
 			@Override
